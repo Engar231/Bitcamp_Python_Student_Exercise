@@ -1,0 +1,184 @@
+🎓 Progetto di Riepilogo – Python & Intelligenza Artificiale
+🧭 Scenario e obiettivo generale
+L’obiettivo è sviluppare un’applicazione completa per la gestione dei dati scolastici degli studenti e la predizione del loro esito finale (Promosso/Bocciato) attraverso modelli di Machine Learning. L’app dovrà gestire i dati in locale, fornire una GUI intuitiva, generare un report completo e poter essere installata su qualsiasi PC Windows.
+
+🔨 Fase 1: Raccolta e gestione procedurale dei dati
+📋 Obiettivo
+Creare uno script procedurale che consenta:
+- l’inserimento manuale di studenti;
+- il salvataggio in file CSV;
+- la lettura e modifica dei dati salvati.
+
+🧩 Campi richiesti
+Ogni studente dovrà avere i seguenti dati:
+
+Campo		Tipo	Obbligatorio	Note
+id		int		✅	univoco
+nome		string		✅	lista nomi maschili
+cognome		string		✅	lista nomi femminili
+età		int		✅	14-20
+genere		string		✅	M/F
+ore_studio	float		✅	settimanali
+assenze		int		✅	numero
+media_voti	float		✅	da 4 a 10
+comportamento	string		✅	Ottimo, Buono, Sufficiente, Scarso
+esito_finale	string		✅	Promosso, Bocciato
+
+🧪 Funzionalità minime
+Menu testuale (in console) per:
+- aggiungere nuovo studente
+- mostrare tutti gli studenti
+- modificare uno studente esistente
+- salvare in studenti.csv
+- caricare da studenti.csv
+- Controlli di input validi
+
+Per riuscire a popolare il dataset con una certa coerenza, vorrei una funzione 
+che simuli la generazione di un dataset di studenti con caratteristiche casuali, 
+fino a raggiungere una certa condizione statistica, ovvero devi sviluppare 
+un sistema che generi un insieme di dati (dataset) di studenti. 
+Ogni studente è descritto da vari attributi, come:
+
+ -ID univoco
+ -Nome (maschile o femminile)
+ -Cognome
+ -Età (da 14 a 20 anni)
+ -Genere (M o F)
+ -Ore di studio giornaliere (valore decimale realistico tra 0 e 8)
+ -Numero di assenze (intero casuale)
+ -Media voti (da 4 a 10, con un decimale)
+ -Comportamento (tra: Ottimo, Buono, Sufficiente, Scarso)
+ -Esito finale (Promosso o Bocciato), determinato da una logica specifica.
+
+Generazione di studenti casuali:
+-I nomi devono essere scelti casualmente da due liste separate (nomi maschili e femminili).
+-I cognomi devono essere scelti casualmente da una lista predefinita.
+-L’esito finale deve essere determinato secondo questa logica:
+-Se il comportamento è “Scarso” → Bocciato
+-Se la media voti è ≤ 5.3 → Bocciato
+-Se le assenze sono esattamente 220 → Bocciato
+-Altrimenti → Promosso
+
+Generazione iterativa del dataset:
+-Generare studenti in “batch” di dimensione definita (ad esempio 200 studenti per batch).
+-Continuare a generare batch e aggiungerli al dataset totale finché la percentuale di studenti promossi non supera il 60% sul totale degli studenti generati finora.
+-Stampare a video come promemoria il numero totale di studenti, il numero di promossi e la percentuale di promossi dopo ogni batch generato.
+
+Salvataggio del dataset:
+-Quando la percentuale di promossi supera il 60%, terminare la generazione.
+-Salvare il dataset finale in un file CSV chiamato studenti.csv.
+
+
+🧭 Fase 2: Refactoring ad oggetti (OOP)
+📋 Obiettivo
+Convertire il codice in stile OOP con:
+-classe Studente
+-classe GestoreStudenti
+
+🧱 Struttura consigliata
+class Studente:
+    def __init__(self, id, nome, cognome, età, genere, ore_studio, assenze, media_voti, comportamento, esito_finale):
+        ...
+
+class GestoreStudenti:
+    def __init__(self):
+        self.studenti = []
+
+    def aggiungi_studente(self, studente):
+        ...
+
+    def salva_csv(self, nome_file):
+        ...
+
+    def carica_csv(self, nome_file):
+        ...
+➕ Extra suggeriti
+-metodo __str__() nella classe Studente
+-menu testuale che richiama i metodi della classe GestoreStudenti
+
+
+🧭 Fase 3: Database SQLite3
+📋 Obiettivo
+Trasferire la gestione dati da file CSV a database SQLite3.
+
+📂 Database: studenti.db
+Tabella: studenti
+Campo		Tipo		Vincoli
+id		INTEGER		PRIMARY KEY
+nome		TEXT		NOT NULL
+cognome		TEXT		NOT NULL
+età		INTEGER		CHECK(14 ≤ età ≤ 20)
+genere		TEXT		CHECK(genere IN ('M','F'))
+ore_studio	REAL		≥ 0
+assenze		INTEGER		≥ 0
+media_voti	REAL		1-10
+comportamento	TEXT		CHECK(valore valido)
+esito_finale	TEXT		CHECK(valore valido)
+
+🧪 Funzionalità minime
+Creazione tabella se non esiste
+-Inserimento nuovo studente
+-Visualizzazione tabella
+-Modifica e cancellazione record
+-Esportazione completa in studenti.csv
+
+➕ Extra suggeriti
+Popola con almeno 150 studenti (puoi realizzare una funzione che realizzi il popolamento)
+
+🧭 Fase 4: Preprocessing e trasformazione in DataFrame
+📋 Obiettivo
+Convertire i dati da studenti.db o studenti.csv in un DataFrame per il ML.
+
+🔁 Trasformazioni da applicare
+-Codifica label (es. comportamento → numeri)
+-Normalizzazione delle variabili numeriche
+-Split train/test (es. 80/20)
+-Salvataggio dei DataFrame in file CSV per debug
+
+🧭 Fase 5: Machine Learning supervisionato
+📋 Obiettivo
+Allenare più modelli di classificazione per prevedere esito_finale.
+
+✅ Modelli obbligatori
+-DecisionTreeClassifier
+-KNNeighborsClassifier
+-GaussianNB
+-SVM
+-RandomForestClassifier
+
+📈 Metriche richieste
+-Accuratezza
+-Matrice di confusione
+-Precision / Recall / F1
+
+➕ Extra suggeriti
+-salvataggio del modello joblib
+-confronto prestazioni dei modelli
+
+🧭 Fase 6: Clustering non supervisionato (KMeans)
+📋 Obiettivo
+-Segmentare gli studenti in gruppi basati su performance/assenze/ore studio.
+-Grafico a dispersione (Matplotlib)
+-Esportazione cluster nel report
+
+🧭 Fase 7: GUI con tkinter
+📋 Obiettivo
+Creare un’interfaccia semplice con le seguenti funzioni:
+-Inserimento dati nuovo studente
+-Salvataggio dati nuovo studente su database
+-Predizione del modello salvato per nuovo studente
+-Visualizzazione statistiche
+-Esportazione in PDF del report con grafici
+
+🧭 Fase 8: Report PDF
+📋 Contenuti
+-Elenco studenti (nome + esito previsto)
+-Grafici: Matrice di Confusione, KMeans, Voti/Assenze
+-Sommario delle metriche
+-Timestamp, autore, modello usato
+
+📦 Librerie suggerite: reportlab o fpdf, + matplotlib
+
+🧭 Fase 9: Compilazione in eseguibile + installer
+-Realizza l'eseguibile per il programma di classificazione/predizione
+-Realizza l'installer per il programma di classificazione/predizione
